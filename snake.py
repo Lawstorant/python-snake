@@ -12,22 +12,36 @@ class Snake:
 		self.limitX = limitX
 		self.limitY = limitY
 		self.head = self.body[0]
+		self.crashSubscribers = []
+		self.blockDirChange = False
 
 
-	def grow(self):
-		(x, y) = self.body[-1].getXY()
-		self.body.append(Segment(SegmentType.snakeBody, self.limitX, self.limitY))
-		self.body[-1].setXY(x, y)
+	def grow(self, n = 1):
+		for i in range(n):
+			(x, y) = self.body[-1].getXY()
+			self.body.append(Segment(SegmentType.snakeBody, self.limitX, self.limitY))
+			self.body[-1].setXY(x, y)
 
 
 	def move(self):
 		self.body[0].move()
+		pos1 = self.body[0].getXY()
+		happened = False
 
 		for i in range(1, len(self.body)):
-			self.body[-i].move()
+			pos2 = self.body[-i].getXY()
 
+			# in case of crashing into itself
+			if pos1 == pos2:
+				self.crashEvent()
+				break
+
+			self.body[-i].move()
 			# get previous segment direction
 			self.body[-i].setDirection(self.body[-i-1].getDirection())
+
+		self.blockDirChange = False
+			
 
 
 	def printToField(self, gameField):
@@ -41,6 +55,18 @@ class Snake:
 
 
 	def setDirection(self, newDirection):
-		self.body[0].setDirection(newDirection)
+		if self.blockDirChange == False:
+			self.body[0].setDirection(newDirection)
 
+			# żeby nie można było się cofnąć w swoje ciało
+			self.blockDirChange = True
+  
+
+	def subscribeToCrashEvent(self, eventHandler):
+		self.crashSubscribers.append(eventHandler)
+
+
+	def crashEvent(self):
+		for subscriber in self.crashSubscribers:
+			subscriber()
 

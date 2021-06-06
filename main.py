@@ -6,11 +6,11 @@ print(" Podaj wielkość pola gry")
 x = int(input(" x: "))
 y = int(input(" y: "))
 
-if x < 6:
-	x = 6
+if x < 9:
+	x = 9
 
-if y < 6:
-	y = 6
+if y < 9:
+	y = 9
 
 # hide terminal cursor
 print("\033[?25l")

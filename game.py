@@ -23,15 +23,17 @@ class Game:
 		self.newSnack()
 		self.gameOver = False
 		self.score = 0
-		self.newDirection = None
 
 
 	def startGame(self):
-		self.snek.grow()
-		self.snek.grow()
+		# event handling function passing
+		self.snek.grow(3)
+		self.snek.subscribeToCrashEvent(self.stopGame)
+
 		thread = threading.Thread(target=self.gameLoop, args=())
 		thread.daemon = True
 		thread.start()
+
 		self.readInput()
 
 
@@ -63,8 +65,12 @@ class Game:
 		self.snack.setXY(newX, newY)
 
 
-	def end(self):
+	def stopGame(self):
 		self.gameOver = True
+
+
+	def end(self):
+		time.sleep(2)
 		self.buffer.clrscr()
 		self.buffer.printToConsole("\n Wynik: " + str(self.score))
 		self.buffer.printToConsole(" Gratulacje!")
@@ -78,7 +84,8 @@ class Game:
 				import msvcrt
 				result = msvcrt.getch();
 			else:
-				result = os.popen("""bash -c 'read -rsn 1 BOBO && printf $BOBO'""").read()
+				# to jest brzydkie
+				result = os.popen("""bash -c 'read -rsn 1 -t 1 BOBO && printf $BOBO'""").read()
 
 			if result == "w":
 				self.snek.setDirection(0)
@@ -89,4 +96,7 @@ class Game:
 			elif result == "a":
 				self.snek.setDirection(3)
 			elif result == "p":
-				self.end()
+				self.stopGame()
+
+		self.end()
+		
