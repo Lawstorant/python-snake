@@ -82,7 +82,7 @@ class Game:
 		while self.gameOver == False:
 			if os.name == "nt":
 				import msvcrt
-				result = msvcrt.getch();
+				result = str(msvcrt.getch())[2]
 			else:
 				# to jest brzydkie
 				result = os.popen("""bash -c 'read -rsn 1 -t 1 BOBO && printf $BOBO'""").read()
