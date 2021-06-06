@@ -27,7 +27,7 @@ Tutaj trzeba było zastosować wywołania systemowe razem z poleganiem na wykry
 ```python
 if os.name == "nt":
     import msvcrt
-    result = msvcrt.getch();
+    result = str(msvcrt.getch())[2];
 else:
     result = os.popen("""bash -c 'read -rsn 1 -t 1 INPUT && printf $INPUT'""").read()
 ```
@@ -44,24 +44,24 @@ Implementacja polega na zastosowaniu maksymalnie prostej budowy, nie polegające
 
 ```python
 class Snake:
-	def __init__(self):
+    def __init__(self):
         self.crashSubscribers = []
 
     [...]
 
     def subscribeToCrashEvent(self, eventHandler):
-		self.crashSubscribers.append(eventHandler)
+	self.crashSubscribers.append(eventHandler)
 
-	def crashEvent(self):
-		for subscriber in self.crashSubscribers:
-			subscriber()
+    def crashEvent(self):
+	for subscriber in self.crashSubscribers:
+	subscriber()
 
 class Game:
     [...]
     def startGame(self):
-		# event handling function passing
-		self.snek.subscribeToCrashEvent(self.stopGame)
+        # event handling function passing
+        self.snek.subscribeToCrashEvent(self.stopGame)
 
     def stopGame(self):
-		self.gameOver = True
+        self.gameOver = True
 ```
